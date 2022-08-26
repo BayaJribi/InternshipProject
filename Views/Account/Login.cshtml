@@ -1,0 +1,77 @@
+﻿@model Dashboard_DW_V2.ViewModel.Login
+
+@{
+    ViewData["Title"] = "Log in";
+        Layout=null;
+
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Dashboard_DW_V2</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Dashboard_DW_V2.styles.css" asp-append-version="true" />
+      <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/solid.js" integrity="sha384-/BxOvRagtVDn9dJ+JGCtcofNXgQO/CCCVKdMfL115s3gOgQxWaX/tSq5V8dRgsbc" crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/fontawesome.js" integrity="sha384-dPBGbj4Uoy1OOpM4+aRGfAOc0W37JkROT+3uynUgTHZCHZNMHfGXsmmvYTffZjYO" crossorigin="anonymous"></script>
+</head>
+
+<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+                <div class="login100-more" style="background-image: url('https://media.istockphoto.com/vectors/financial-data-graph-chart-vector-illustration-trend-lines-columns-vector-id901172818?k=20&m=901172818&s=612x612&w=0&h=VbCZBLEzQJyxkJy0kM5BsRqir8Gd1g9oZYANTPgqOCQ=');">
+				</div>
+				<form class="login100-form validate-form" id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+					<span class="login100-form-title p-b-43 mb-5">
+						Login to continue
+					</span>
+					
+					
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+                        <input asp-for="Email" placeholder="Email" class="input100" autocomplete="Email" aria-required="true" />
+                        <span asp-validation-for="Email" class="label-input100"></span>
+					</div>
+					
+					
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
+                        <input asp-for="Password" placeholder="Password" class="input100" type="password" autocomplete="current-password" aria-required="true" />
+                        <span asp-validation-for="Password" class="label-input100"></span>
+
+					</div>
+
+					<div class="flex-sb-m w-full p-t-3 p-b-32">
+						<div class="contact100-form-checkbox">
+
+                            <label asp-for="RememberMe" class="form-label">
+                            <input class="form-check-input" asp-for="RememberMe" />
+                            @Html.DisplayNameFor(m => m.RememberMe)
+                            </label>
+						</div>  
+					</div>
+			
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn">
+							Login
+						</button>
+					</div>
+@*					
+					<div class="text-center p-t-46 p-b-20 mt-2">
+						<span class="txt1">
+                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+
+						</span>
+					</div>*@
+
+				</form>
+
+
+			</div>
+		</div>
+	</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,149 @@
+﻿@{
+	    ViewData["Title"] = "Visits";
+	 Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Visits</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                        <div class="row text-center">
+                            <div class="col-xl-4 col-md-6 ">
+                                <div class="card text-black mb-4">
+                                    <div class="card-body">Total visits Counter</div>
+                                    <div class="card-footer align-items-center justify-content-between">
+                                    <p class="small text-black  " id="TotalVisits"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6">
+                                <div class="card text-black mb-4">
+                                    <div class="card-body">Total Direct Spending</div>
+                                    <div class="card-footer align-items-center justify-content-between text-center">
+                                        <p class="small text-black " id="TotalDirectSpending"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6">
+                                <div class="card text-black mb-4">
+                                    <div class="card-body">Total Indirect Spending</div>
+                                    <div class="card-footer align-items-center justify-content-between">
+                                        <p class="small text-black " id="TotalindirectSpending"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-line"></i>
+                                        Direct and Indirect Spent                                    
+                                    </div>
+                                    <div class="card-body">                
+                                        <canvas id="mylineChart" width="100" height="100"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie"></i>
+                                        Visitors for Each Month
+                                    </div>
+                                    <div class="card-body">                
+                                        <canvas id="mydoughnutChart" width="50" height="50"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+<script>
+
+$(function(){
+
+            $.ajax({
+                type:"POST",
+                url:"/Home/GetVisitsData",
+                data:"" ,
+                contextType:"application/json; charset=utf-8",
+                dataType:"json",
+
+                success: OnSuccessResult,
+                error: OnError
+            });
+      
+            function add(accumulator, a) {
+              return accumulator + a;
+            }
+
+            function OnSuccessResult(data) {
+                var _data=data;
+                var _chartMonths=(_data[0]);
+                var _chartVisitors=_data[1];
+                var _chartdirectSpent=_data[2];
+                var _chartindirectSpent=_data[3];
+                var TotalVisitors = _chartVisitors.reduce(add, 0);
+                var TotalDirectSpent = _chartdirectSpent.reduce(add, 0); 
+                var TotalIndirectSpent = _chartindirectSpent.reduce(add, 0);
+               
+                document.getElementById('TotalVisits').innerHTML=TotalVisitors;
+                document.getElementById('TotalDirectSpending').innerHTML=TotalDirectSpent;
+                document.getElementById('TotalindirectSpending').innerHTML=TotalIndirectSpent;
+
+
+                var barColor=["#e4bcad","#e27c7c", "#a86464", "#6d4b4b", "#503f3f", "#333333", "#3c4e4b", "#466964", "#599e94", "#6cd4c5","#54bebe", "#76c8c8"];
+           
+                new Chart("mydoughnutChart", {
+                           type:"doughnut",
+
+                           data:{
+                               labels:["January","February","March","April","May","June","July","August","September","October","November","December"],
+                               
+                               datasets : 
+                                   [{
+                                    backgroundColor:barColor,
+                                    label: "Visitors for each Month",
+                                    data:_chartVisitors
+                                   
+                                   }]
+                           },
+                       });
+                       
+                       
+                       new Chart("mylineChart", {
+                           type:"line",
+
+                           data:{
+                               labels:["January","February","March","April","May","June","July","August","September","October","November","December"],                              
+                               datasets : 
+                                   [{
+                                    borderColor:"#e27c7c",
+                                    label: "DirectSpent",
+                                    data:_chartdirectSpent                                   
+                                   },
+                                   {
+                                    borderColor:"#a86464",
+                                    label: "IndirectSpent",
+                                    data:_chartindirectSpent                                   
+                                   }
+                                   ]
+                           },
+                       });
+                       
+                       }
+            function OnError(err) {
+
+            }
+
+    });
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

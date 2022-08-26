@@ -1,0 +1,121 @@
+﻿@{
+        ViewData["Title"] = "Preferences";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Preferences</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                        <div class="row text-center align-items-center">
+                             <div class="col-xl-8">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-bar me-1"></i>
+                                        Preferences Data
+                                    </div>
+                                    <div class="card-body">                
+                                         <canvas id="myChart" width="100" height="50"></canvas>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div>
+                                    <div class="card text-black mb-5">
+                                        <div class="card-body">Total Declared Preferences</div>
+                                        <div class="card-footer align-items-center justify-content-between">
+                                        <p class="small text-black  " id="TotalCountValue"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="card text-black mb-5">
+                                        <div class="card-body">Contacts Without Preferences</div>
+                                        <div class="card-footer align-items-center justify-content-between text-center">
+                                            <p class="small text-black " id="NoPrefCount"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="card text-black mb-5">
+                                        <div class="card-body">Contacts with Several Preferences</div>
+                                        <div class="card-footer align-items-center justify-content-between">
+                                            <p class="small text-black " id="CountSeveralOnes"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                       </div>
+                    </div>
+                </main>
+            </div>
+
+    
+</div>
+
+<script>
+
+
+$(function(){      
+            $.ajax({
+                type:"POST",
+                url:"/Home/GetPreferencesData",
+                data:"" ,
+                contextType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: OnSuccessResult,
+                error: OnError
+            });
+      
+            function OnSuccessResult(data) {
+                var _data=data;
+                var _totalCount =_data[0];
+                var _CountEmailPref=(_data[1]);
+                var _CountMailPref=_data[2];
+                var _CountPhonePref=_data[3];
+                var _CountSmsPref=_data[4];
+                var _NoPref = _data[5];
+                var _CountSeveralPref = _data[6];
+
+                document.getElementById('TotalCountValue').innerHTML=_totalCount;
+                document.getElementById('NoPrefCount').innerHTML=_NoPref;
+                document.getElementById('CountSeveralOnes').innerHTML=_CountSeveralPref;
+
+
+                console.log(_totalCount);
+
+           
+                var barColor=["#e27c7c", "#a86464", "#6d4b4b", "#503f3f", "#333333", "#3c4e4b", "#466964", "#599e94", "#6cd4c5"];
+                new Chart("myChart", {
+                           type:"bar",
+                           data:{
+                               labels:["Email preference","Mail Preference","Phone Preference","Sms Preference"],
+                               datasets : 
+                                   [{
+                                   backgroundColor:"#e27c7c"         ,
+                                   label:"Number of contacts",
+                                   data:[_CountEmailPref, _CountMailPref, _CountPhonePref,  _CountSmsPref]                   
+                                   }
+                                  ]
+                           }
+                       });
+                       
+                       }
+            function OnError(err) {
+
+            }
+
+      
+    });
+</script>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

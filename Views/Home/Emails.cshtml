@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Emails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Emails</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                        <div class="row text-center align-items-center">
+                            <div></div>
+                            <div class="col-xl-4">
+                                <div>
+                                    <div class="card text-black mb-5">
+                                        <div class="card-body">Total Emails Sent</div>
+                                        <div class="card-footer align-items-center justify-content-between">
+                                        <p class="small text-black  " id="TotalEmailsSent"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="card text-black mb-5">
+                                        <div class="card-body">Total Emails Sent Successfully</div>
+                                        <div class="card-footer align-items-center justify-content-between text-center">
+                                            <p class="small text-black " id="TotalSuccesfulsent"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="card text-black mb-5">
+                                        <div class="card-body">Total Opened Emails</div>
+                                        <div class="card-footer align-items-center justify-content-between">
+                                            <p class="small text-black " id="Opened"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-xl-8">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-bar me-1"></i>
+                                        Emails Sent Data
+                                    </div>
+                                    <div class="card-body">                
+                                        <canvas id="mybarChart" width="100" height="50"></canvas>
+
+                                    </div>
+                                </div>
+                            </div>
+                       </div>
+                    </div>
+                </main>
+            </div>
+
+    
+</div>
+<script>
+
+
+$(function(){
+       
+
+
+            $.ajax({
+                type:"POST",
+                url:"/Home/GetEmailsData",
+                data:"" ,
+                contextType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: OnSuccessResult,
+                error: OnError
+            });
+      
+            function add(accumulator, a) {
+              return accumulator + a;
+            }
+            function OnSuccessResult(data) {
+                var _data=data;
+                var _chartLabels=(_data[0]);
+                var _chartDataSent=_data[1];
+                var _chartDataRecieved=_data[2];
+                var _ChartDataOpened=_data[3]
+                var sumOpened = _ChartDataOpened.reduce(add, 0); // with initial value to avoid when the array is empty
+                var sumSentSuccesful = _chartDataRecieved.reduce(add, 0); // with initial value to avoid when the array is empty
+                var sumSent = _chartDataSent.reduce(add, 0); // with initial value to avoid when the array is empty
+               
+                
+                document.getElementById('TotalEmailsSent').innerHTML=sumSent;
+                document.getElementById('TotalSuccesfulsent').innerHTML=sumSentSuccesful;
+                document.getElementById('Opened').innerHTML=sumOpened;
+
+                    console.log(sumOpened);
+                    console.log(sumSentSuccesful);
+                    console.log(sumSent);
+
+
+           
+                var barColor=["#e27c7c", "#a86464", "#6d4b4b", "#503f3f", "#333333", "#3c4e4b", "#466964", "#599e94", "#6cd4c5"];
+                new Chart("mybarChart", {
+                           type:"bar",
+                           options: {
+                               scales:{
+                                   x:{
+                                       stacked:true,
+                                   },
+                                   y:{
+                                       beginAtZero:true,
+                                   }
+                               }
+                           },
+                           data:{
+                               labels:["April","May","June","July"],
+                               
+                               datasets : 
+                                   [{
+                                    backgroundColor:"#6d4b4b",
+                                    label: "Opened Emails",
+                                    data:_ChartDataOpened
+                                   
+                                   },
+                                  {
+                                    backgroundColor:"#a86464",
+                                    label: "Emails Succesfully sent",
+                                    data:_chartDataRecieved 
+                                   },
+                                   {
+                                   backgroundColor:"#e27c7c",
+                                   label: "Emails sent",
+                                   data:_chartDataSent                                
+                                   }]
+                           },
+                       });
+                       
+                       }
+            function OnError(err) {
+
+            }
+
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
